@@ -3,11 +3,13 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-/** Points favicon at `base`-prefixed URL so dev + GitHub Pages always resolve `/Portfolio/favicon.svg`. */
+/** Set favicon URL for dev + static hosts (`base` may be `./` on GitHub Pages). */
 function syncPublicFavicon() {
   const rawBase = import.meta.env.BASE_URL
-  const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`
-  const href = `${base}favicon.svg?v=1`
+  const href =
+    rawBase === "./"
+      ? "./favicon.svg?v=1"
+      : `${rawBase.endsWith("/") ? rawBase : `${rawBase}/`}favicon.svg?v=1`
 
   let icon = document.querySelector('link[rel="icon"][type="image/svg+xml"]')
   if (!icon) {
