@@ -6,4 +6,9 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   base: "/Portfolio/",
+  build: {
+    // Publish this folder via GitHub Pages: Settings → Pages → Branch main, folder “/docs”.
+    outDir: "docs",
+    emptyOutDir: true,
+  },
 });
