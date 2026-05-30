@@ -282,7 +282,68 @@ function App() {
 
     if (cmd === "help") {
       pushLine('&nbsp;', "t-blank");
-      pushLine('<span class="t-acc">available:</span> help, about, experience, skills, contact, theme, clear');
+      pushLine('<span class="t-acc">available commands:</span>');
+      pushLine('  <span class="t-key">help</span>           - show this help message');
+      pushLine('  <span class="t-key">ls</span>             - list all commands');
+      pushLine('  <span class="t-key">ls themes</span>      - list all available themes');
+      pushLine('  <span class="t-key">about</span>          - display information about me');
+      pushLine('  <span class="t-key">experience</span>     - show work experience');
+      pushLine('  <span class="t-key">skills</span>         - list technical skills');
+      pushLine('  <span class="t-key">contact</span>        - show contact information');
+      pushLine('  <span class="t-key">theme</span>          - show available themes');
+      pushLine('  <span class="t-key">switch theme</span> &lt;name&gt; - switch to a theme');
+      pushLine('  <span class="t-key">clear</span>          - clear terminal screen');
+      pushLine('&nbsp;', "t-blank");
+      return;
+    }
+
+    if (cmd === "ls") {
+      if (args[0] === "themes") {
+        pushLine('&nbsp;', "t-blank");
+        pushLine('<span class="t-acc">available themes:</span>');
+        THEMES.forEach((t) => {
+          const icon = t === "winter" ? "❄️" : t === "spring" ? "🌸" : t === "summer" ? "☀️" : t === "autumn" ? "🍁" : "⭐";
+          const active = t === theme ? ' <span class="t-acc">(current)</span>' : '';
+          pushLine(`  ${icon} <span class="t-key">${t}</span>${active}`);
+        });
+        pushLine('&nbsp;', "t-blank");
+        pushLine('<span class="t-dim">usage: switch theme &lt;name&gt;</span>');
+        pushLine('&nbsp;', "t-blank");
+        return;
+      }
+      
+      pushLine('&nbsp;', "t-blank");
+      pushLine('<span class="t-acc">available commands:</span>');
+      pushLine('  help, ls, about, experience, skills, contact, theme, switch, clear');
+      pushLine('&nbsp;', "t-blank");
+      pushLine('<span class="t-dim">tip: try "ls themes" or "help" for more info</span>');
+      pushLine('&nbsp;', "t-blank");
+      return;
+    }
+
+    if (cmd === "switch") {
+      if (args[0] === "theme") {
+        const requested = args[1];
+        if (!requested) {
+          pushLine('<span class="t-err">error:</span> theme name required', "t-err");
+          pushLine('<span class="t-dim">usage: switch theme &lt;name&gt;</span>');
+          pushLine('<span class="t-dim">available: ${THEMES.join(", ")}</span>');
+          pushLine('&nbsp;', "t-blank");
+          return;
+        }
+        if (!THEMES.includes(requested)) {
+          pushLine(`<span class="t-err">error:</span> theme "${requested}" not found`, "t-err");
+          pushLine(`<span class="t-dim">available: ${THEMES.join(", ")}</span>`);
+          pushLine('&nbsp;', "t-blank");
+          return;
+        }
+        setTheme(requested);
+        pushLine(`<span class="t-acc">✓</span> theme switched to <span class="t-val">${requested}</span>`);
+        pushLine('&nbsp;', "t-blank");
+        return;
+      }
+      pushLine(`<span class="t-err">error:</span> unknown switch command`, "t-err");
+      pushLine('<span class="t-dim">usage: switch theme &lt;name&gt;</span>');
       pushLine('&nbsp;', "t-blank");
       return;
     }
@@ -377,9 +438,8 @@ function App() {
     if (e.key === "Tab") {
       e.preventDefault();
       const partial = inputValue.toLowerCase();
-      const matched = ["help", "about", "experience", "skills", "contact", "theme", "clear"].find((x) =>
-        x.startsWith(partial)
-      );
+      const commands = ["help", "ls", "about", "experience", "skills", "contact", "theme", "switch theme", "clear"];
+      const matched = commands.find((x) => x.startsWith(partial));
       if (matched) setInputValue(matched);
       return;
     }
